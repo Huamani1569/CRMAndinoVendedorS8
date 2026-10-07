@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fondo azul para que la transición Ícono → Splash sea continua -->
+    <style name="Theme.CRMAndino" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/azul_andino</item>
+    </style>
+</resources>

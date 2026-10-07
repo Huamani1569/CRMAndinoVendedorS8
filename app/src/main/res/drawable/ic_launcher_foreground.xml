@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo CRM Andino: montañas andinas + línea de ventas en crecimiento -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Montaña posterior (turquesa) -->
+    <path
+        android:fillColor="#1B998B"
+        android:pathData="M26,76 L48,40 L70,76 Z" />
+    <!-- Montaña frontal (blanco nieve) -->
+    <path
+        android:fillColor="#E8EEF5"
+        android:pathData="M44,76 L64,50 L84,76 Z" />
+    <!-- Línea de crecimiento de ventas (dorado) -->
+    <path
+        android:strokeColor="#F2A93B"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M28,66 L44,58 L56,64 L74,44" />
+    <!-- Punta de flecha -->
+    <path
+        android:fillColor="#F2A93B"
+        android:pathData="M81,36 L68,41 L77,50 Z" />
+</vector>
