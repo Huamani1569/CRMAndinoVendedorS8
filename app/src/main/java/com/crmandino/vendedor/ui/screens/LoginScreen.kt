@@ -1,5 +1,7 @@
 package com.crmandino.vendedor.ui.screens
 
+import com.crmandino.vendedor.ui.theme.SobreColor
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -220,7 +222,7 @@ fun BotonPrincipal(texto: String, cargando: Boolean, onClick: () -> Unit, textoC
     ) {
         if (cargando) {
             CircularProgressIndicator(
-                color = Color.White,
+                color = SobreColor,
                 strokeWidth = 2.dp,
                 modifier = Modifier.size(22.dp)
             )

@@ -1,7 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+}
+
+// Semana 15: firma de la versión de publicación (release). La llave y sus claves están en
+// ../_firma/keystore.properties (en la laptop, fuera de GitHub). Sin ese archivo, release queda sin firmar.
+val firma = Properties().apply {
+    val archivo = rootProject.file("../_firma/keystore.properties")
+    if (archivo.exists()) archivo.inputStream().use { load(it) }
 }
 
 android {
@@ -16,14 +25,26 @@ android {
         applicationId = "com.crmandino.vendedor"
         minSdk = 24
         targetSdk = 36
-        versionCode = 14
-        versionName = "1.4-semana14"
+        versionCode = 16
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            if (!firma.isEmpty) {
+                storeFile = file(firma.getProperty("storeFile"))
+                storePassword = firma.getProperty("storePassword")
+                keyAlias = firma.getProperty("keyAlias")
+                keyPassword = firma.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (!firma.isEmpty) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

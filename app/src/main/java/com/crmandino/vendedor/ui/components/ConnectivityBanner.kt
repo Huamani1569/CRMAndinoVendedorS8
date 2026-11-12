@@ -1,5 +1,7 @@
 package com.crmandino.vendedor.ui.components
 
+import com.crmandino.vendedor.ui.theme.SobreColor
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,11 +40,11 @@ fun ConnectivityBanner() {
             .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Filled.CloudOff, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+        Icon(Icons.Filled.CloudOff, contentDescription = null, tint = SobreColor, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(8.dp))
         Text(
             text = "Sin conexión · datos locales · ${estado.pendientes} cambio(s) pendiente(s)",
-            color = Color.White,
+            color = SobreColor,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold
         )

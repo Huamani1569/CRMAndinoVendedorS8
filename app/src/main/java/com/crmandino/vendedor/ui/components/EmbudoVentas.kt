@@ -1,5 +1,7 @@
 package com.crmandino.vendedor.ui.components
 
+import com.crmandino.vendedor.ui.theme.SobreColor
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -70,7 +72,7 @@ fun EmbudoVentas(resumen: List<ResumenEtapa>, onElegirEtapa: (String) -> Unit = 
                     }
                     Text(
                         "${com.crmandino.vendedor.model.EtapaVenta.desdeTexto(fila.etapa).etiqueta} · ${fila.cantidad} · ${formatearSoles(fila.valor)}",
-                        color = Color.White,
+                        color = SobreColor,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold
                     )

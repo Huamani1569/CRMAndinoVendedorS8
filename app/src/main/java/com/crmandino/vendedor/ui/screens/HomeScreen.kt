@@ -60,6 +60,7 @@ import com.crmandino.vendedor.ui.theme.DoradoInca
 import com.crmandino.vendedor.ui.theme.RojoError
 import com.crmandino.vendedor.ui.theme.TextoSecundario
 import com.crmandino.vendedor.ui.theme.TurquesaLago
+import com.crmandino.vendedor.util.DetectorAgitar
 import com.crmandino.vendedor.util.Formato
 import com.crmandino.vendedor.viewmodel.LeadViewModel
 import com.crmandino.vendedor.viewmodel.SyncViewModel
@@ -105,6 +106,12 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= 33) pedirPermiso.launch(Manifest.permission.POST_NOTIFICATIONS)
         ventasViewModel.iniciarSondeo()
+    }
+
+    // Sensor: agitar el celular = sincronizar ahora
+    DetectorAgitar {
+        syncViewModel.sincronizarAhora()
+        ventasViewModel.avisar("Agitaste el celular: sincronizando con el servidor…")
     }
 
     FondoAndino {

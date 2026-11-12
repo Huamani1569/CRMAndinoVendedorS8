@@ -3,6 +3,8 @@ package com.crmandino.vendedor
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import com.crmandino.vendedor.util.BarrasDelSistema
+import com.crmandino.vendedor.util.prepararTema
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -60,14 +62,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Barras del sistema con íconos oscuros sobre el fondo claro de vidrio
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
-        )
+        prepararTema()   // modo claro / oscuro guardado
         if (intent?.getBooleanExtra("abrir_notificaciones", false) == true) abrirNotificaciones.intValue = 1
         setContent {
             CRMAndinoTheme {
+                BarrasDelSistema()
                 AppNavigation(
                     authViewModel, leadViewModel, interaccionViewModel, tareaViewModel, syncViewModel,
                     ventasViewModel, abrirNotificaciones.intValue

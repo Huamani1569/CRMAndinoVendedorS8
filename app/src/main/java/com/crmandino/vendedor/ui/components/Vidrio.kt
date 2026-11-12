@@ -26,7 +26,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -57,6 +60,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.crmandino.vendedor.ui.theme.AzulAndino
+import com.crmandino.vendedor.ui.theme.BlancoVidrio
+import com.crmandino.vendedor.ui.theme.Paleta
+import com.crmandino.vendedor.ui.theme.PreferenciaTema
+import com.crmandino.vendedor.ui.theme.SobreColor
+import com.crmandino.vendedor.ui.theme.Superficie
+import com.crmandino.vendedor.ui.theme.VidrioBorde
 import com.crmandino.vendedor.ui.theme.DoradoInca
 import com.crmandino.vendedor.ui.theme.FondoCieloAbajo
 import com.crmandino.vendedor.ui.theme.FondoCieloArriba
@@ -116,22 +125,27 @@ fun TarjetaVidrio(
     tinte: Color? = null,
     contenido: @Composable ColumnScope.() -> Unit
 ) {
-    val arriba = tinte?.copy(alpha = 0.20f)?.compositeSobreBlanco() ?: VidrioAlto
+    val arriba = tinte?.copy(alpha = 0.20f)?.compositeSobre(Superficie) ?: VidrioAlto
     Column(
         modifier
             .fillMaxWidth()
             .shadow(14.dp, FormaTarjeta, ambientColor = AzulAndino.copy(alpha = 0.10f), spotColor = AzulAndino.copy(alpha = 0.16f))
             .clip(FormaTarjeta)
             .background(Brush.verticalGradient(listOf(arriba, VidrioBajo)))
-            .border(1.dp, Brush.linearGradient(listOf(Color.White, Color.White.copy(alpha = 0.25f))), FormaTarjeta)
+            .border(1.dp, Brush.linearGradient(listOf(VidrioBorde, VidrioBorde.copy(alpha = VidrioBorde.alpha * 0.25f))), FormaTarjeta)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(relleno),
         content = contenido
     )
 }
 
-private fun Color.compositeSobreBlanco(): Color =
-    Color(red = 1f - (1f - red) * alpha, green = 1f - (1f - green) * alpha, blue = 1f - (1f - blue) * alpha, alpha = 0.88f)
+// Mezcla un tinte suave sobre la superficie (blanca en modo claro, azul noche en modo oscuro).
+private fun Color.compositeSobre(base: Color): Color = Color(
+    red = base.red * (1 - alpha) + red * alpha,
+    green = base.green * (1 - alpha) + green * alpha,
+    blue = base.blue * (1 - alpha) + blue * alpha,
+    alpha = 0.88f
+)
 
 // Cabecera grande tipo iOS: botón atrás en círculo de vidrio, título y acciones.
 @Composable
@@ -162,10 +176,25 @@ fun BarraVidrio(
                     Text(subtitulo, style = MaterialTheme.typography.bodyMedium, color = TextoSecundario, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
-            Row(verticalAlignment = Alignment.CenterVertically, content = acciones)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                acciones()
+                // En las pantallas principales: botón ☀/🌙 para elegir tema Sistema / Claro / Oscuro
+                if (onAtras == null) BotonTema()
+            }
         }
         AvisoSinConexion()
     }
+}
+
+// Cambia el tema: Automático (sistema) → Claro → Oscuro.
+@Composable
+fun BotonTema() {
+    val (icono, texto) = when (Paleta.preferencia) {
+        PreferenciaTema.SISTEMA -> Icons.Filled.BrightnessAuto to "Tema automático (toca para claro)"
+        PreferenciaTema.CLARO -> Icons.Filled.LightMode to "Tema claro (toca para oscuro)"
+        PreferenciaTema.OSCURO -> Icons.Filled.DarkMode to "Tema oscuro (toca para automático)"
+    }
+    BotonCircular(icono, texto, { Paleta.siguientePreferencia() })
 }
 
 // Botón redondo de vidrio (atrás, campana, sincronizar...). insignia > 0 muestra un contador.
@@ -178,7 +207,7 @@ fun BotonCircular(icono: ImageVector, descripcion: String, onClick: () -> Unit, 
             .shadow(6.dp, CircleShape, ambientColor = AzulAndino.copy(alpha = 0.12f))
             .clip(CircleShape)
             .background(VidrioAlto)
-            .border(1.dp, Color.White, CircleShape)
+            .border(1.dp, VidrioBorde, CircleShape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -205,11 +234,11 @@ fun AvisoSinConexion() {
             .padding(horizontal = 14.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Filled.CloudOff, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+        Icon(Icons.Filled.CloudOff, contentDescription = null, tint = SobreColor, modifier = Modifier.size(16.dp))
         Spacer(Modifier.width(8.dp))
         Text(
             "Sin conexión · ${estado.pendientes} pendiente(s) por enviar",
-            color = Color.White,
+            color = SobreColor,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold
         )
@@ -231,12 +260,12 @@ fun BotonCapsula(
         onClick = onClick,
         enabled = habilitado && !cargando,
         shape = FormaCapsula,
-        colors = ButtonDefaults.buttonColors(containerColor = color, contentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(containerColor = color, contentColor = SobreColor),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
         modifier = modifier.height(50.dp)
     ) {
         if (cargando) {
-            CircularProgressIndicator(color = Color.White, strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+            CircularProgressIndicator(color = SobreColor, strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
         } else {
             if (icono != null) {
                 Icon(icono, contentDescription = null, modifier = Modifier.size(20.dp))
@@ -299,8 +328,8 @@ fun SegmentadoVidrio(opciones: List<String>, seleccionada: Int, onSeleccionar: (
         modifier
             .fillMaxWidth()
             .clip(FormaCapsula)
-            .background(Color.White.copy(alpha = 0.45f))
-            .border(1.dp, Color.White, FormaCapsula)
+            .background(BlancoVidrio.copy(alpha = 0.45f))
+            .border(1.dp, VidrioBorde, FormaCapsula)
             .padding(4.dp)
     ) {
         opciones.forEachIndexed { i, texto ->
@@ -309,7 +338,7 @@ fun SegmentadoVidrio(opciones: List<String>, seleccionada: Int, onSeleccionar: (
                 Modifier
                     .weight(1f)
                     .clip(FormaCapsula)
-                    .background(if (activo) Color.White else Color.Transparent)
+                    .background(if (activo) BlancoVidrio else Color.Transparent)
                     .clickable { onSeleccionar(i) }
                     .padding(vertical = 9.dp),
                 contentAlignment = Alignment.Center
@@ -340,11 +369,11 @@ fun ChipsVidrio(opciones: List<String>, seleccionada: String?, onSeleccionar: (S
                 opcion,
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = if (activo) FontWeight.Bold else FontWeight.Medium,
-                color = if (activo) Color.White else AzulAndino,
+                color = if (activo) SobreColor else AzulAndino,
                 modifier = Modifier
                     .clip(FormaCapsula)
-                    .background(if (activo) AzulAndino else Color.White.copy(alpha = 0.6f))
-                    .border(1.dp, if (activo) AzulAndino else Color.White, FormaCapsula)
+                    .background(if (activo) AzulAndino else BlancoVidrio.copy(alpha = 0.6f))
+                    .border(1.dp, if (activo) AzulAndino else VidrioBorde, FormaCapsula)
                     .clickable { onSeleccionar(opcion) }
                     .padding(horizontal = 14.dp, vertical = 8.dp)
             )
@@ -383,11 +412,11 @@ fun CampoVidrio(
             visualTransformation = transformacion,
             shape = RoundedCornerShape(18.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White.copy(alpha = 0.85f),
-                unfocusedContainerColor = Color.White.copy(alpha = 0.55f),
-                disabledContainerColor = Color.White.copy(alpha = 0.35f),
+                focusedContainerColor = BlancoVidrio.copy(alpha = 0.85f),
+                unfocusedContainerColor = BlancoVidrio.copy(alpha = 0.55f),
+                disabledContainerColor = BlancoVidrio.copy(alpha = 0.35f),
                 focusedBorderColor = TurquesaLago,
-                unfocusedBorderColor = Color.White
+                unfocusedBorderColor = VidrioBorde
             ),
             modifier = Modifier.fillMaxWidth()
         )
@@ -473,8 +502,8 @@ fun BarraNavegacionVidrio(items: List<ItemNavegacion>, seleccionado: Int, onSele
                 .fillMaxWidth()
                 .shadow(18.dp, FormaCapsula, ambientColor = AzulAndino.copy(alpha = 0.18f), spotColor = AzulAndino.copy(alpha = 0.25f))
                 .clip(FormaCapsula)
-                .background(Brush.verticalGradient(listOf(VidrioAlto, Color.White.copy(alpha = 0.70f))))
-                .border(1.dp, Color.White, FormaCapsula)
+                .background(Brush.verticalGradient(listOf(VidrioAlto, BlancoVidrio.copy(alpha = 0.70f))))
+                .border(1.dp, VidrioBorde, FormaCapsula)
                 .padding(6.dp)
         ) {
             items.forEachIndexed { i, item ->
