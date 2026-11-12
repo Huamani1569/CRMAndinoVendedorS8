@@ -11,6 +11,19 @@ import com.crmandino.vendedor.data.remote.dto.LoginResponse
 import com.crmandino.vendedor.data.remote.dto.SaludResponse
 import com.crmandino.vendedor.data.remote.dto.TareaDto
 import com.crmandino.vendedor.data.remote.dto.TareaRequest
+import com.crmandino.vendedor.data.remote.dto.ClienteDto
+import com.crmandino.vendedor.data.remote.dto.CotizacionDto
+import com.crmandino.vendedor.data.remote.dto.CotizacionRequest
+import com.crmandino.vendedor.data.remote.dto.EtapaRequest
+import com.crmandino.vendedor.data.remote.dto.HistorialDto
+import com.crmandino.vendedor.data.remote.dto.MarcadasResponse
+import com.crmandino.vendedor.data.remote.dto.MarcarLeidasRequest
+import com.crmandino.vendedor.data.remote.dto.NotificacionesResponse
+import com.crmandino.vendedor.data.remote.dto.ProductoDto
+import com.crmandino.vendedor.data.remote.dto.RecomendacionDto
+import com.crmandino.vendedor.data.remote.dto.RutaResponse
+import com.crmandino.vendedor.data.remote.dto.VisitaDto
+import com.crmandino.vendedor.data.remote.dto.VisitaRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -95,4 +108,58 @@ interface ApiService {
         @Path("id") id: Int,
         @Query("version") version: Int
     ): Response<DatoResponse<TareaDto>>
+
+    // ---------- Proyecto Final: etapa del lead (con validación de transición en el servidor) ----------
+    @PUT("api/leads/{id}/etapa")
+    suspend fun cambiarEtapa(
+        @Header("X-Operacion-UUID") uuidOperacion: String,
+        @Path("id") id: Int,
+        @Body body: EtapaRequest
+    ): Response<DatoResponse<LeadDto>>
+
+    @GET("api/leads/{id}/historial")
+    suspend fun historialLead(@Path("id") id: Int): Response<ListaResponse<HistorialDto>>
+
+    // ---------- Semana 12: catálogo y cotizaciones ----------
+    @GET("api/productos")
+    suspend fun productos(): Response<ListaResponse<ProductoDto>>
+
+    @GET("api/cotizaciones")
+    suspend fun cotizaciones(): Response<ListaResponse<CotizacionDto>>
+
+    @POST("api/cotizaciones")
+    suspend fun crearCotizacion(
+        @Header("X-Operacion-UUID") uuidOperacion: String,
+        @Body body: CotizacionRequest
+    ): Response<DatoResponse<CotizacionDto>>
+
+    @POST("api/cotizaciones/{id}/envio")
+    suspend fun enviarCotizacion(
+        @Header("X-Operacion-UUID") uuidOperacion: String,
+        @Path("id") id: Int
+    ): Response<DatoResponse<CotizacionDto>>
+
+    // ---------- Semana 12: ruta del día y check-in con GPS ----------
+    @GET("api/visitas/ruta")
+    suspend fun rutaDelDia(@Query("fecha") fecha: String?): Response<RutaResponse>
+
+    @POST("api/visitas")
+    suspend fun registrarVisita(
+        @Header("X-Operacion-UUID") uuidOperacion: String,
+        @Body body: VisitaRequest
+    ): Response<DatoResponse<VisitaDto>>
+
+    // ---------- Semana 14: ficha del cliente y recomendaciones (ML) ----------
+    @GET("api/clientes/{id}")
+    suspend fun cliente(@Path("id") id: Int): Response<DatoResponse<ClienteDto>>
+
+    @GET("api/ml/recomendaciones/{clienteId}")
+    suspend fun recomendaciones(@Path("clienteId") clienteId: Int): Response<ListaResponse<RecomendacionDto>>
+
+    // ---------- Notificaciones ----------
+    @GET("api/notificaciones")
+    suspend fun notificaciones(): Response<NotificacionesResponse>
+
+    @PUT("api/notificaciones/leidas")
+    suspend fun marcarLeidas(@Body body: MarcarLeidasRequest): Response<MarcadasResponse>
 }

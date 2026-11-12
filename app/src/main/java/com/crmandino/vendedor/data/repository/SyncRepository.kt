@@ -8,7 +8,10 @@ import com.crmandino.vendedor.data.local.entities.SyncMetadataEntity
 import com.crmandino.vendedor.data.mapper.aEntity
 import com.crmandino.vendedor.data.remote.api.ApiService
 import com.crmandino.vendedor.data.remote.dto.DatoResponse
+import com.crmandino.vendedor.data.remote.dto.CotizacionRequest
 import com.crmandino.vendedor.data.remote.dto.ErrorResponse
+import com.crmandino.vendedor.data.remote.dto.EtapaRequest
+import com.crmandino.vendedor.data.remote.dto.VisitaRequest
 import com.crmandino.vendedor.data.remote.dto.InteraccionDto
 import com.crmandino.vendedor.data.remote.dto.InteraccionRequest
 import com.crmandino.vendedor.data.remote.dto.LeadDto
@@ -41,7 +44,8 @@ data class ResultadoSync(val exito: Boolean, val mensaje: String, val reintentar
 class SyncRepository(
     private val db: AppDatabase,
     private val api: ApiService,
-    private val sesion: SesionLocal
+    private val sesion: SesionLocal,
+    private val ventas: VentasRepository
 ) {
     private val gson = Gson()
     private val mutex = Mutex() // evita dos sincronizaciones al mismo tiempo (worker + botón)
@@ -69,6 +73,8 @@ class SyncRepository(
 
         val descarga = descargar()
         if (!descarga.exito) return descarga
+        // Proyecto Final: catálogo, cotizaciones, ruta del día y notificaciones (se guardan en la caché)
+        ventas.descargarTodo()
 
         metaDao.guardar(SyncMetadataEntity(RECURSO_GENERAL, System.currentTimeMillis(), null))
         opDao.limpiarHistorial()
@@ -195,6 +201,11 @@ class SyncRepository(
                         val idRemoto = lead.remoteId ?: return Envio.NoEnviable("El lead aún no existe en el servidor")
                         respuesta(api.actualizarLead(uuidOp, idRemoto, datos.copy(version = lead.version)))
                     }
+                    TipoOperacion.ETAPA -> {
+                        val idRemoto = lead.remoteId ?: return Envio.NoEnviable("El lead aún no existe en el servidor")
+                        val etapa = gson.fromJson(op.payload, EtapaRequest::class.java)
+                        respuesta(api.cambiarEtapa(uuidOp, idRemoto, etapa.copy(version = lead.version)))
+                    }
                     else -> Envio.NoEnviable("Operación no permitida para el vendedor")
                 }
             }
@@ -231,6 +242,11 @@ class SyncRepository(
                 }
             }
 
+            // Semana 12: cotización (crear y enviar) y visita con check-in GPS.
+            // No tienen tabla propia en Room: el JSON completo viaja en la cola y el servidor no las duplica (UUID).
+            EntidadSync.COTIZACION -> respuesta(api.crearCotizacion(uuidOp, gson.fromJson(op.payload, CotizacionRequest::class.java)))
+            EntidadSync.VISITA -> respuesta(api.registrarVisita(uuidOp, gson.fromJson(op.payload, VisitaRequest::class.java)))
+
             else -> Envio.NoEnviable("Entidad desconocida: ${op.entidad}")
         }
     }
@@ -257,7 +273,9 @@ class SyncRepository(
                         remoteId = dto.id,
                         version = maxOf(local.version, dto.version),
                         vendedorId = dto.vendedorId,
-                        vendedorNombre = dto.vendedorNombre ?: local.vendedorNombre
+                        vendedorNombre = dto.vendedorNombre ?: local.vendedorNombre,
+                        puntaje = dto.puntaje ?: local.puntaje,
+                        clienteId = dto.clienteId ?: local.clienteId
                     )
                 )
             }

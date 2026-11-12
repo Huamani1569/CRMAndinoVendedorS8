@@ -29,10 +29,7 @@ import com.crmandino.vendedor.model.ResumenEtapa
  */
 @Composable
 fun EmbudoVentas(resumen: List<ResumenEtapa>, onElegirEtapa: (String) -> Unit = {}) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+    TarjetaVidrio(relleno = 4.dp) {
         Column(
             Modifier
                 .fillMaxWidth()
@@ -72,7 +69,7 @@ fun EmbudoVentas(resumen: List<ResumenEtapa>, onElegirEtapa: (String) -> Unit = 
                         )
                     }
                     Text(
-                        "${fila.etapa} · ${fila.cantidad} · ${formatearSoles(fila.valor)}",
+                        "${com.crmandino.vendedor.model.EtapaVenta.desdeTexto(fila.etapa).etiqueta} · ${fila.cantidad} · ${formatearSoles(fila.valor)}",
                         color = Color.White,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold

@@ -5,7 +5,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.crmandino.vendedor.model.EstadoSincronizacion
 
-// Interacción (llamada, correo o reunión) asociada a un lead por su uuid.
+// Interacción (llamada, WhatsApp, correo, reunión o visita) asociada a un lead por su uuid.
 // Se usa el uuid del lead (no el id) porque un lead creado sin conexión todavía no tiene id remoto.
 @Entity(
     tableName = "interacciones",
@@ -18,6 +18,7 @@ data class InteraccionEntity(
     val leadUuid: String,
     val tipo: String,
     val fecha: String,            // dd/mm/aaaa (en la API viaja como aaaa-mm-dd)
+    val resultado: String? = null, // CONTESTO, NO_CONTESTO, INTERESADO, NO_INTERESADO
     val nota: String,
     val version: Int = 0,
     val estadoSync: String = EstadoSincronizacion.PENDIENTE.name,

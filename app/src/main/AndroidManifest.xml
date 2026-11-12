@@ -5,6 +5,12 @@
     <!-- Semana 8: consumo de la API REST y detección de conectividad -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Semana 12: GPS para el check-in de visitas (regla de 300 m) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Android 13+: notificaciones (lead nuevo del Portal, cotización aceptada, descuento aprobado) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 
     <application
         android:name=".CrmVendedorApplication"

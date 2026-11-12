@@ -2,6 +2,7 @@ package com.crmandino.vendedor
 
 import android.app.Application
 import com.crmandino.vendedor.di.AppContainer
+import com.crmandino.vendedor.util.Notificador
 import com.crmandino.vendedor.worker.SyncWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ class CrmVendedorApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         contenedor = AppContainer(this)
+        Notificador.crearCanal(this)
         SyncWorker.programarPeriodica(this)
 
         // Al RECUPERAR la conexión se sincroniza de inmediato (RF13).

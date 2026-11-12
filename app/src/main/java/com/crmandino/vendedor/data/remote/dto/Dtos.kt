@@ -5,7 +5,8 @@ import com.google.gson.JsonObject
 // DTO (Data Transfer Object): la forma EXACTA del JSON que envía y recibe la API REST.
 
 // ---------- Autenticación ----------
-data class LoginRequest(val correo: String, val clave: String, val rolEsperado: String)
+// Proyecto Final: la app indica cuál es (VENDEDOR) y la API valida que la cuenta tenga ese rol
+data class LoginRequest(val correo: String, val clave: String, val app: String)
 
 data class UsuarioDto(val id: Int, val nombre: String, val correo: String, val rol: String)
 

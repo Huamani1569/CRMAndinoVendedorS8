@@ -36,7 +36,7 @@ class AuthRepository(
     suspend fun login(correo: String, clave: String): ResultadoLogin {
         val correoLimpio = correo.trim().lowercase()
         return try {
-            val respuesta = api.login(LoginRequest(correoLimpio, clave, RolUsuario.VALOR))
+            val respuesta = api.login(LoginRequest(correoLimpio, clave, RolUsuario.APP))
             val cuerpo = respuesta.body()
             when {
                 respuesta.isSuccessful && cuerpo != null -> {
@@ -69,6 +69,7 @@ class AuthRepository(
             db.tareaDao().borrarTodo()
             db.leadDao().borrarTodo()
             db.syncMetadataDao().borrarTodo()
+            db.cacheDao().borrarTodo()
             db.usuarioDao().borrarTodo()
         }
     }

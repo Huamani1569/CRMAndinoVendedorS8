@@ -6,7 +6,8 @@ data class InteraccionDto(
     val leadUuid: String,
     val tipo: String,
     val fecha: String,          // aaaa-mm-dd
-    val nota: String,
+    val resultado: String?,
+    val nota: String?,
     val version: Int,
     val eliminado: Boolean?
 )
@@ -16,6 +17,7 @@ data class InteraccionRequest(
     val leadUuid: String,
     val tipo: String,
     val fecha: String,          // aaaa-mm-dd
+    val resultado: String?,
     val nota: String,
     val version: Int? = null
 )

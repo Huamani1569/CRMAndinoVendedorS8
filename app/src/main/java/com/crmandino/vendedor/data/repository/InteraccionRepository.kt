@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID
 
-// RF08: interacciones (llamada, correo, reunión) de un lead, con cola de sincronización.
+// RF08 / RF-V05: interacciones (llamada, WhatsApp, correo, reunión, visita) con su resultado de un lead, con cola de sincronización.
 class InteraccionRepository(
     private val db: AppDatabase,
     private val cola: ColaOperaciones,
@@ -24,19 +24,21 @@ class InteraccionRepository(
     fun observarPorLead(leadUuid: String): Flow<List<Interaccion>> =
         dao.obtenerPorLead(leadUuid).map { lista -> lista.map { it.aModelo() } }
 
-    suspend fun registrar(leadUuid: String, tipo: String, fecha: String, nota: String) {
+    suspend fun registrar(leadUuid: String, tipo: String, fecha: String, resultado: String?, nota: String) {
         db.withTransaction {
-            val nueva = InteraccionEntity(uuid = UUID.randomUUID().toString(), leadUuid = leadUuid, tipo = tipo, fecha = fecha, nota = nota)
+            val nueva = InteraccionEntity(uuid = UUID.randomUUID().toString(), leadUuid = leadUuid, tipo = tipo, fecha = fecha, resultado = resultado, nota = nota)
             val idLocal = dao.insertar(nueva).toInt()
             cola.registrar(EntidadSync.INTERACCION, idLocal, TipoOperacion.CREAR, nueva.aRequest(), "Registrar $tipo del $fecha")
         }
+        // El lead deja de figurar "sin contacto" de inmediato (el servidor recalcula su puntaje al recibirla)
+        db.leadDao().porUuid(leadUuid)?.let { db.leadDao().actualizar(it.copy(diasSinContacto = 0)) }
         programarSync()
     }
 
-    suspend fun editar(id: Int, tipo: String, fecha: String, nota: String) {
+    suspend fun editar(id: Int, tipo: String, fecha: String, resultado: String?, nota: String) {
         db.withTransaction {
             val actual = dao.porId(id) ?: return@withTransaction
-            val editada = actual.copy(tipo = tipo, fecha = fecha, nota = nota, estadoSync = EstadoSincronizacion.PENDIENTE.name, mensajeError = null)
+            val editada = actual.copy(tipo = tipo, fecha = fecha, resultado = resultado, nota = nota, estadoSync = EstadoSincronizacion.PENDIENTE.name, mensajeError = null)
             dao.actualizar(editada)
             cola.registrar(EntidadSync.INTERACCION, id, TipoOperacion.ACTUALIZAR, editada.aRequest(), "Editar $tipo del $fecha")
         }

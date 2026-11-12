@@ -1,8 +1,8 @@
 package com.crmandino.vendedor.model
 
-// Rol que puede entrar en ESTA app.
-// Según la guía del curso, el rol "cliente" representa al VENDEDOR en el caso CRM Andino Perú.
+// Rol que puede entrar en ESTA app. En el Proyecto Final la API usa roles con su nombre real.
 object RolUsuario {
-    const val VALOR = "cliente"      // Valor de la columna "rol" en la tabla usuarios (servidor y Room)
-    const val ETIQUETA = "Vendedor"  // Lo que se muestra en pantalla
+    const val VALOR = "vendedor"      // columna "rol" de la tabla usuarios
+    const val APP = "VENDEDOR"        // la API valida con qué app se ingresa
+    const val ETIQUETA = "Vendedor de campo"
 }

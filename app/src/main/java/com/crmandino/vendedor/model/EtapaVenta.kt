@@ -1,19 +1,40 @@
 package com.crmandino.vendedor.model
 
-// Etapas del embudo de ventas, en el orden en que avanza un lead.
-// En Room la etapa se guarda como texto (la etiqueta: "Prospecto", "Negociación", ...).
+// Etapas del embudo del Proyecto Final (mismas que la API y la base de datos).
+// En Room y en la API se guarda el CÓDIGO (NUEVO, CONTACTADO...); en pantalla se muestra la etiqueta.
 enum class EtapaVenta(val etiqueta: String) {
-    PROSPECTO("Prospecto"),
+    NUEVO("Nuevo"),
     CONTACTADO("Contactado"),
-    PROPUESTA("Propuesta"),
-    NEGOCIACION("Negociación"),
-    CERRADO("Cerrado");
+    CALIFICADO("Calificado"),
+    COTIZADO("Cotizado"),
+    GANADO("Ganado"),
+    PERDIDO("Perdido");
+
+    val abierta: Boolean get() = this != GANADO && this != PERDIDO
+
+    // Etapas a las que el vendedor puede pasar a mano (mismas reglas que el trigger reglas_lead).
+    // COTIZADO no se elige a mano: se alcanza al enviar una cotización.
+    fun siguientes(): List<EtapaVenta> = when (this) {
+        NUEVO -> listOf(CONTACTADO, CALIFICADO, GANADO, PERDIDO)
+        CONTACTADO -> listOf(CALIFICADO, GANADO, PERDIDO)
+        CALIFICADO -> listOf(GANADO, PERDIDO)
+        COTIZADO -> listOf(CALIFICADO, GANADO, PERDIDO)
+        PERDIDO -> listOf(NUEVO)
+        GANADO -> emptyList()
+    }
 
     companion object {
-        // Convierte el texto guardado en la base de datos de vuelta a la etapa.
-        fun desdeTexto(texto: String): EtapaVenta =
-            entries.find { it.etiqueta == texto } ?: PROSPECTO
+        // Acepta el código o la etiqueta; también las etapas de la Semana 8.
+        fun desdeTexto(texto: String?): EtapaVenta = when (texto) {
+            null -> NUEVO
+            "Prospecto" -> NUEVO
+            "Propuesta" -> CALIFICADO
+            "Negociación" -> COTIZADO
+            "Cerrado" -> GANADO
+            else -> entries.find { it.name == texto || it.etiqueta == texto } ?: NUEVO
+        }
 
-        val etiquetas: List<String> = entries.map { it.etiqueta }
+        val codigos: List<String> = entries.map { it.name }
+        val abiertas: List<EtapaVenta> = entries.filter { it.abierta }
     }
 }

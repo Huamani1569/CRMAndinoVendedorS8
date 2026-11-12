@@ -22,6 +22,7 @@ object TipoOperacion {
     const val CREAR = "CREAR"
     const val ACTUALIZAR = "ACTUALIZAR"
     const val ELIMINAR = "ELIMINAR"
+    const val ETAPA = "ETAPA"          // cambio de etapa (PUT /api/leads/{id}/etapa)
 }
 
 // Entidad a la que pertenece cada operación pendiente.
@@ -29,4 +30,6 @@ object EntidadSync {
     const val LEAD = "lead"
     const val INTERACCION = "interaccion"
     const val TAREA = "tarea"
+    const val COTIZACION = "cotizacion"   // Semana 12: se crea y envía desde el celular
+    const val VISITA = "visita"           // Semana 12: check-in con GPS
 }

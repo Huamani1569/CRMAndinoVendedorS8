@@ -10,6 +10,7 @@ import com.crmandino.vendedor.data.repository.InteraccionRepository
 import com.crmandino.vendedor.data.repository.LeadRepository
 import com.crmandino.vendedor.data.repository.SyncRepository
 import com.crmandino.vendedor.data.repository.TareaRepository
+import com.crmandino.vendedor.data.repository.VentasRepository
 import com.crmandino.vendedor.util.ConnectivityObserver
 import com.crmandino.vendedor.worker.SyncWorker
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +45,8 @@ class AppContainer(private val context: Context) {
     val leadRepository = LeadRepository(db, sesion, cola, programarSync)
     val interaccionRepository = InteraccionRepository(db, cola, programarSync)
     val tareaRepository = TareaRepository(db, cola, programarSync)
-    val syncRepository = SyncRepository(db, api, sesion)
+    val ventasRepository = VentasRepository(context, db, api, sesion, cola, programarSync)
+    val syncRepository = SyncRepository(db, api, sesion, ventasRepository)
 
     fun sincronizarEnSegundoPlano() = SyncWorker.sincronizarPronto(context)
 }

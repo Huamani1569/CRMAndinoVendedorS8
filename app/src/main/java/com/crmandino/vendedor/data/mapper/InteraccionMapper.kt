@@ -13,7 +13,8 @@ fun InteraccionDto.aEntity(idLocal: Int = 0) = InteraccionEntity(
     leadUuid = leadUuid,
     tipo = tipo,
     fecha = FechaMapper.isoAVisible(fecha),
-    nota = nota,
+    resultado = resultado,
+    nota = nota ?: "",
     version = version,
     estadoSync = EstadoSincronizacion.SINCRONIZADO.name,
     mensajeError = null,
@@ -27,6 +28,7 @@ fun InteraccionEntity.aModelo() = Interaccion(
     leadUuid = leadUuid,
     tipo = tipo,
     fecha = fecha,
+    resultado = resultado,
     nota = nota,
     version = version,
     estadoSync = EstadoSincronizacion.desdeTexto(estadoSync),
@@ -38,5 +40,6 @@ fun InteraccionEntity.aRequest() = InteraccionRequest(
     leadUuid = leadUuid,
     tipo = tipo,
     fecha = FechaMapper.visibleAIso(fecha),
+    resultado = resultado,
     nota = nota
 )

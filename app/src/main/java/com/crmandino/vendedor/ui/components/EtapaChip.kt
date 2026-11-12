@@ -1,44 +1,32 @@
 package com.crmandino.vendedor.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.crmandino.vendedor.model.EtapaVenta
-import com.crmandino.vendedor.ui.theme.EtapaCerrado
+import com.crmandino.vendedor.ui.theme.EtapaCalificado
 import com.crmandino.vendedor.ui.theme.EtapaContactado
-import com.crmandino.vendedor.ui.theme.EtapaNegociacion
-import com.crmandino.vendedor.ui.theme.EtapaPropuesta
-import com.crmandino.vendedor.ui.theme.EtapaProspecto
+import com.crmandino.vendedor.ui.theme.EtapaCotizado
+import com.crmandino.vendedor.ui.theme.EtapaGanado
+import com.crmandino.vendedor.ui.theme.EtapaNuevo
+import com.crmandino.vendedor.ui.theme.EtapaPerdido
 
 // Color asociado a cada etapa del embudo.
 fun EtapaVenta.color(): Color = when (this) {
-    EtapaVenta.PROSPECTO -> EtapaProspecto
+    EtapaVenta.NUEVO -> EtapaNuevo
     EtapaVenta.CONTACTADO -> EtapaContactado
-    EtapaVenta.PROPUESTA -> EtapaPropuesta
-    EtapaVenta.NEGOCIACION -> EtapaNegociacion
-    EtapaVenta.CERRADO -> EtapaCerrado
+    EtapaVenta.CALIFICADO -> EtapaCalificado
+    EtapaVenta.COTIZADO -> EtapaCotizado
+    EtapaVenta.GANADO -> EtapaGanado
+    EtapaVenta.PERDIDO -> EtapaPerdido
 }
 
-// Color a partir del texto guardado en Room ("Prospecto", "Cerrado", ...).
+// Color a partir del código guardado en Room ("NUEVO", "GANADO", ...).
 fun colorEtapa(etapa: String): Color = EtapaVenta.desdeTexto(etapa).color()
 
-// Etiqueta de etapa: muestra texto + color (accesibilidad: no depende solo del color).
+// Etiqueta de etapa en cápsula de vidrio: texto + color (no depende solo del color).
 @Composable
 fun EtapaChip(etapa: String, modifier: Modifier = Modifier) {
-    Text(
-        text = etapa,
-        color = Color.White,
-        style = MaterialTheme.typography.labelMedium,
-        fontWeight = FontWeight.SemiBold,
-        modifier = modifier
-            .background(colorEtapa(etapa), RoundedCornerShape(50))
-            .padding(horizontal = 10.dp, vertical = 4.dp)
-    )
+    val e = EtapaVenta.desdeTexto(etapa)
+    Capsula(e.etiqueta, e.color(), modifier)
 }

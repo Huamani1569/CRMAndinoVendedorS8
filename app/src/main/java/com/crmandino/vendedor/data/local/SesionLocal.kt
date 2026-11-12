@@ -50,6 +50,11 @@ class SesionLocal(context: Context) {
     val ultimoUsuarioId: Int
         get() = prefs.getInt(K_ID, -1)
 
+    // Última notificación del servidor que ya se mostró como notificación del sistema
+    var ultimaNotificacion: Long
+        get() = prefs.getLong(K_NOTIF, -1L)
+        set(valor) = prefs.edit { putLong(K_NOTIF, valor) }
+
     fun usuario(): UsuarioSesion? {
         val id = prefs.getInt(K_ID, -1)
         val nombre = prefs.getString(K_NOMBRE, null) ?: return null
@@ -74,6 +79,7 @@ class SesionLocal(context: Context) {
             putString(K_SAL, sal)
             putString(K_HASH, hash(sal, usuario.correo.lowercase(), clave))
             putBoolean(K_ACTIVA, true)
+            if (usuario.id != prefs.getInt(K_ID, -1)) putLong(K_NOTIF, -1L)
         }
     }
 
@@ -111,6 +117,7 @@ class SesionLocal(context: Context) {
         private const val K_SAL = "clave_sal"
         private const val K_HASH = "clave_hash"
         private const val K_ACTIVA = "sesion_activa"
+        private const val K_NOTIF = "ultima_notificacion"
 
         fun normalizarUrl(url: String): String {
             var limpia = url.trim()

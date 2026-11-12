@@ -81,8 +81,8 @@ fun LoginScreen(
     ) {
         CabeceraMarca()
 
-        // ---------- Formulario ----------
-        Column(Modifier.padding(24.dp)) {
+        // ---------- Formulario (tarjeta de vidrio) ----------
+        com.crmandino.vendedor.ui.components.TarjetaVidrio(Modifier.padding(horizontal = 18.dp), relleno = 20.dp) {
             Text("Iniciar sesión", style = MaterialTheme.typography.headlineMedium)
             Text(
                 "Ingresa con tu cuenta de ${RolUsuario.ETIQUETA.lowercase()}",
@@ -146,7 +146,7 @@ fun LoginScreen(
 
             Spacer(Modifier.height(8.dp))
             Text(
-                "Las cuentas las crea el administrador en el servidor. Sin conexión solo puede ingresar " +
+                "Las cuentas de vendedor las crea el supervisor. Sin conexión solo puede ingresar " +
                     "quien ya inició sesión antes en este celular.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -196,18 +196,14 @@ fun CabeceraMarca() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                Brush.verticalGradient(listOf(AzulAndino, AzulAndinoOscuro)),
-                RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
-            )
             .statusBarsPadding()
             .padding(vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppLogo(size = 84.dp)
         Spacer(Modifier.height(12.dp))
-        Text("CRM Andino Perú", style = MaterialTheme.typography.titleLarge, color = Color.White)
-        Text("App del ${RolUsuario.ETIQUETA.lowercase()}", color = NieveAndina)
+        Text("CRM Andino Perú", style = MaterialTheme.typography.headlineLarge, color = AzulAndino)
+        Text("App del ${RolUsuario.ETIQUETA.lowercase()}", color = com.crmandino.vendedor.ui.theme.TurquesaLago)
     }
 }
 
@@ -217,7 +213,7 @@ fun BotonPrincipal(texto: String, cargando: Boolean, onClick: () -> Unit, textoC
     Button(
         onClick = onClick,
         enabled = !cargando,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(50),
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp)

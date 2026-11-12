@@ -16,8 +16,8 @@ android {
         applicationId = "com.crmandino.vendedor"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.8-semana8"
+        versionCode = 14
+        versionName = "1.4-semana14"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -59,6 +59,8 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     // Semana 8: sesión guardada de forma segura (EncryptedSharedPreferences)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    // Semana 12: mapa de la ruta del día (OpenStreetMap, no necesita clave de Google)
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
