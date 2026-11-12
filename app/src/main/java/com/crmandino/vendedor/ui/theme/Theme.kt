@@ -2,11 +2,13 @@ package com.crmandino.vendedor.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -52,5 +54,8 @@ fun CRMAndinoTheme(content: @Composable () -> Unit) {
         error = RojoError, onError = Color.White
     )
 
-    MaterialTheme(colorScheme = esquema, typography = Typography, shapes = FormasVidrio, content = content)
+    // El texto sin color explícito toma TextoPrincipal (oscuro en modo claro, claro en modo oscuro)
+    MaterialTheme(colorScheme = esquema, typography = Typography, shapes = FormasVidrio) {
+        CompositionLocalProvider(LocalContentColor provides TextoPrincipal, content = content)
+    }
 }
